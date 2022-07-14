@@ -1,0 +1,36 @@
+version: '2.1'
+services:
+  node_app:
+    container_name: interns-mongo-nest-demo-node
+    restart: always
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    networks:
+      - services-tier
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+
+  mongo:
+    container_name: interns-mongo-nest-demo-mongo
+    image: mongo
+    restart: always
+    healthcheck:
+      test: mongo --eval 'db.getCollectionNames()'
+      interval: 10s
+      timeout: 2s
+      retries: 10
+    ports:
+      - 27017:27017
+    volumes:
+      - interns_mongo_nest_demo_mongo_vol:/data/db
+    networks:
+      - services-tier
+
+networks:
+  services-tier:
+
+volumes:
+  interns_mongo_nest_demo_mongo_vol:
